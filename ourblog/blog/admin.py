@@ -1,8 +1,12 @@
 from django.contrib import admin
 
-from .models import Article
+from .models import Article, Comment
 
 class ArticleAdmin(admin.ModelAdmin):
-    fields = ['article_text', 'pub_date']
+    fields = ['title_text', 'article_text', 'pub_date', 'author']
+
+class CommentAdmin(admin.ModelAdmin):
+    fields = ['comment', 'comment_text', 'pub_date', 'author']
 
 admin.site.register(Article, ArticleAdmin)
+admin.site.register(Comment, CommentAdmin)
