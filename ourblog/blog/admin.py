@@ -1,17 +1,12 @@
 from django.contrib import admin
-from .models import Article, Comment
+from .models import Article
 
-
-# Register your models here.
-admin.site.register(Article)
-admin.site.register(Comment)
-from .models import Article, Comment
 
 class ArticleAdmin(admin.ModelAdmin):
-    fields = ['title_text', 'article_text', 'pub_date', 'author']
+    list_display = ('title','author','content',  'status','pub_date')
+    list_filter = ("status",)
+    search_fields = ['title', 'content']
 
-class CommentAdmin(admin.ModelAdmin):
-    fields = ['comment', 'comment_text', 'pub_date', 'author']
+admin.register(Article, ArticleAdmin)
 
 admin.site.register(Article, ArticleAdmin)
-admin.site.register(Comment, CommentAdmin)
