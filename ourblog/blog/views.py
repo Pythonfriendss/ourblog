@@ -10,4 +10,8 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         return Article.objects.order_by('-pub_date')[:10]
+
+class ArticleView(generic.DetailView):
+    template_name = 'blog/detail.html'
+    model = Article
     
