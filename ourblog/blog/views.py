@@ -1,41 +1,14 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 from django.shortcuts import render
 from django.http import HttpResponse
-=======
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
->>>>>>> masterzee
-from .models import Article
-from django.urls import reverse
+from .forms import CommentForm
+from .models import Article, Comment
 from django.views.generic import ListView, DetailView, CreateView
 
 def index(request):
     context = {
-        'posts': Article.objects.all()
+        'articles': Article.objects.all()
     }
-<<<<<<< HEAD
-    return HttpResponse("Hello, world. You're at the pblog index page.")
-=======
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
-from .models import Article, Comment
-from django.urls import reverse
-from django.views import generic
-
-
-class IndexView(generic.ListView):
-    template_name = 'blog/index.html'
-
-    def get_queryset(self):
-        return Article.objects.order_by('-pub_date')[:10]
-
-class ArticleView(generic.DetailView):
-    template_name = 'blog/detail.html'
-    model = Article
-    
->>>>>>> 7531963e5667724879b77948df21733b641b9b63
-=======
     return render(request, 'index.html', context)
 
 class IndexView(ListView):
@@ -56,7 +29,30 @@ class ArticleDetailView(DetailView):
     model = Article
     template_name = 'article-detail.html'
 
+def article_post(request, pk):
+    template_name = 'article-detail.html'
+    article = get_object_or_404(Article, pk=pk)
+    comments = article.comments.filter(active=True).order_by("-created_on")
+    new_comment = None
+    # Comment posted
+    if request.method == 'POST':
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+
+            # Create Comment object but don't save to database yet
+            new_comment = comment_form.save(commit=False)
+            # Assign the current post to the comment
+            new_comment.post = article
+            # Save the comment to the database
+            new_comment.save()
+    else:
+        comment_form = CommentForm()
+
+    return render(request, template_name, {'article': article,
+                                        'comments': comments,
+                                        'new_comment': new_comment,
+                                        'comment_form': comment_form})
+
 class ArticleCreateView(CreateView):
     model = Article
     fields = ['title', 'content']
->>>>>>> masterzee
